@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>⚡Satesibe Notice Board⚡</title>
+<style>
+    :root{--neon:#00ffaa;--bg:#020a0f;--accent:#0ff}
+    html,body{height:100%;}
+    body {
+        background: radial-gradient(ellipse at center, rgba(0,20,30,0.6), rgba(0,6,12,1));
+        color: var(--accent);
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        margin: 0;
+        padding: 0 20px 60px;
+        overflow-x: hidden;
+    }
+
+    /* MATRIX CANVAS */
+    canvas#matrixBG{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+    .page-wrap{position:relative;z-index:5;max-width:900px;margin:40px auto;padding:20px}
+    h1{font-size:30px;text-align:center;margin:8px 0 18px;text-shadow:0 0 12px rgba(0,255,255,0.12)}
+
+    .notice-container{display:block;background:rgba(0,0,0,0.35);border:1px solid rgba(0,255,255,0.08);padding:18px;border-radius:12px;backdrop-filter:blur(6px);box-shadow:0 8px 40px rgba(0,255,255,0.03)}
+
+    .notice-card{background:linear-gradient(180deg, rgba(0,255,255,0.03), rgba(0,0,0,0.15));border:1px solid rgba(0,255,255,0.06);padding:14px;border-radius:10px;margin-bottom:12px;box-shadow:0 6px 24px rgba(0,255,255,0.02)}
+    .notice-card p{margin:0 0 8px;line-height:1.4;color:rgba(255,255,255,0.92)}
+    .notice-meta{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .notice-time{font-size:13px;opacity:0.8}
+
+    .add-box{margin-top:16px;padding:12px;border-radius:10px;border:1px dashed rgba(0,255,255,0.06)}
+    textarea{width:100%;min-height:90px;padding:10px;border-radius:8px;background:rgba(0,0,0,0.5);border:1px solid rgba(0,255,255,0.06);color:var(--accent);resize:vertical}
+    .controls{display:flex;gap:10px;margin-top:10px;justify-content:flex-end}
+    .btn{background:transparent;border:1px solid var(--neon);color:var(--neon);padding:8px 12px;border-radius:8px;cursor:pointer}
+    .btn:hover{background:var(--neon);color:#001}
+
+    .footer{position:fixed;left:0;right:0;bottom:6px;text-align:center;color:rgba(0,255,255,0.65);font-size:13px}
+
+    @media (max-width:600px){ .page-wrap{margin:18px 12px} }
+</style>
+</head>
+<body>
+<canvas id="matrixBG"></canvas>
+<div class="page-wrap">
+  <div style="text-align:center; margin-bottom:12px;">
+    <img src="logo.png" alt="Logo" style="width:110px; height:110px; border-radius:14px; border:1px solid rgba(0,255,255,0.25); box-shadow:0 0 18px rgba(0,255,255,0.25);">
+    <div style="font-size:26px; margin-top:6px; color:#0ff; text-shadow:0 0 10px #0ff;">Satasibe Notice Board</div>
+</div>
+<h1>⚡Cyber Notice Board⚡</h1>
+
+  <div class="notice-container" id="noticeList">
+    <!-- notices injected here -->
+  </div>
+
+  <div class="add-box">
+    <h3 style="margin:0 0 8px">Add New Notice</h3>
+    <textarea id="noticeText" placeholder="Write your notice here..."></textarea>
+    <div class="controls">
+      <button class="btn" onclick="clearInput()">Clear</button>
+      <button class="btn" onclick="addNotice()">Post Notice</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">© Made by D.M.Sithum Sayuranga Bandara</div>
+
+<script>
+/* MATRIX RAIN BACKGROUND */
+const canvas=document.getElementById('matrixBG');
+const ctx=canvas.getContext('2d');
+let W=canvas.width=window.innerWidth, H=canvas.height=window.innerHeight;
+window.addEventListener('resize',()=>{W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;init();});
+const fontSize = 14; let cols; let drops;
+function init(){cols=Math.floor(W/fontSize);drops=new Array(cols).fill(1);}init();
+function draw(){ctx.fillStyle='rgba(0,0,0,0.06)';ctx.fillRect(0,0,W,H);ctx.fillStyle='rgba(0,255,170,0.9)';ctx.font=fontSize+'px monospace';for(let i=0;i<cols;i++){const text=String.fromCharCode(0x30A0 + Math.random()*96);ctx.fillText(text,i*fontSize,drops[i]*fontSize); if(drops[i]*fontSize > H && Math.random()>0.975) drops[i]=0; drops[i]++;}}setInterval(draw,45);
+
+/* NOTICE BOARD LOGIC */
+const noticeList = document.getElementById('noticeList');
+function addNotice(){const t=document.getElementById('noticeText').value.trim(); if(!t) return; const card=document.createElement('div'); card.className='notice-card'; const time=new Date(); const timestr=time.toLocaleString(); card.innerHTML=`<p>${escapeHtml(t)}</p><div class="notice-meta"><span class="notice-time">${timestr}</span><div><button class="btn" onclick="copyNotice(this)">Copy</button> <button class="btn" onclick="deleteNotice(this)">Delete</button></div></div>`; noticeList.prepend(card); document.getElementById('noticeText').value='';}
+function deleteNotice(btn){btn.closest('.notice-card').remove();}
+function clearInput(){document.getElementById('noticeText').value='';}
+function copyNotice(btn){const text=btn.closest('.notice-card').querySelector('p').textContent; navigator.clipboard.writeText(text); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy',1200);} 
+function escapeHtml(unsafe){ return unsafe.replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#039;"}[m];}); }
+</script>
+
+<!-- Top-right arrows & menu -->
+<div class="top-right-arrows" onclick="toggleMenu()">↑↑↑</div>
+<div id="menu" class="hidden-menu">
+  <a href="members.html">Home</a>
+  <a href="translator.html">Translator</a>
+  <a href="scan.html">Scan</a>
+  <a href="contact.html">Contact</a>
+  <a href="noticeboard.html">Notice Board</a>
+  <a href="chat.html">Chat</a>
+
+
+</div>
+
+<style>
+.top-right-arrows{
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-size: 28px;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff;
+  cursor: pointer;
+  z-index: 10;
+}
+.hidden-menu{
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background: #0a0f2d;
+  border: 1px solid #00eaff;
+  box-shadow:0 0 20px #00eaff;
+  padding: 15px;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+}
+.hidden-menu a{
+  color: #00eaff;
+  text-decoration: none;
+  font-size: 18px;
+}
+.hidden-menu a:hover{
+  text-decoration: underline;
+}
+</style>
+
+<script>
+function toggleMenu(){
+  const menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+</script>
+
+
+
+
+</body>
+</html>

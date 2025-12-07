@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Satasibe Ultimate Secret Language Translator ⚡</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #05010a;
+  color: #f0f0f0;
+  overflow-x: hidden;
+}
+
+/* MATRIX RAIN CANVAS */
+#matrixCanvas {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* HOME SECTION & LOGO */
+.home-section {
+  margin-top:120px;
+  text-align:center;
+  color:#fff;
+  padding:20px;
+  position:relative;
+  z-index:6;
+}
+.logo-container {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+#logoImg {
+  width:120px;
+  height:120px;
+  border-radius:18px;
+  border:1px solid rgba(0,255,255,0.18);
+  box-shadow:0 8px 30px rgba(0,170,255,0.08);
+  background:linear-gradient(135deg,rgba(0,255,255,0.02),rgba(0,140,255,0.01));
+}
+.logo-text {
+  font-size:42px;
+  color:#aef;
+  text-shadow:0 0 12px #0ff;
+  margin-top:-8px;
+}
+.tagline {
+  color:#6df;
+  opacity:1;
+  text-shadow:0 0 8px #6df;
+}
+
+/* TEXTAREA & OUTPUT */
+textarea {
+  width:100%;
+  max-width:800px;
+  height:120px;
+  margin-bottom:10px;
+  padding:10px;
+  font-size:16px;
+  position:relative;
+  z-index:6;
+}
+button {
+  padding:8px 15px;
+  margin-right:5px;
+  font-size:14px;
+  cursor:pointer;
+  position:relative;
+  z-index:6;
+}
+#output {
+  margin-top:10px;
+  padding:10px;
+  background:#1e1e1e;
+  font-size:16px;
+  word-wrap:break-word;
+  min-height:50px;
+  position:relative;
+  z-index:6;
+}
+
+/* HOLOGRAM CARDS */
+.holo-container {
+  position:relative;
+  z-index:6;
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  justify-content:center;
+  align-items:center;
+  margin-top:30px;
+}
+.holo-card {
+  width:220px;
+  height:140px;
+  background:linear-gradient(135deg,rgba(0,255,255,0.06),rgba(0,140,255,0.03));
+  border:1px solid rgba(0,255,255,0.18);
+  backdrop-filter:blur(6px);
+  border-radius:12px;
+  padding:12px;
+  color:#cff;
+  box-shadow:0 6px 30px rgba(0,255,255,0.06);
+  transform-origin:center;
+  animation:holoFloat 6s ease-in-out infinite;
+}
+.holo-card h3 { margin:0 0 6px 0; color:#7ff; font-size:16px; }
+.holo-card p { margin:0; font-size:13px; opacity:0.85; }
+@keyframes holoFloat {
+  0% {transform:translateY(0) rotateY(0);}
+  50% {transform:translateY(-12px) rotateY(6deg);}
+  100% {transform:translateY(0) rotateY(0);}
+}
+
+/* TERMINAL */
+.terminal {
+  width:80%;
+  max-width:900px;
+  margin:30px auto;
+  background:rgba(0,0,0,0.6);
+  border:1px solid rgba(0,255,255,0.12);
+  padding:14px;
+  border-radius:8px;
+  color:#9ff;
+  font-family:'Courier New', monospace;
+  font-size:14px;
+  box-shadow:0 0 20px rgba(0,255,255,0.04);
+  position:relative;
+  z-index:6;
+}
+.cursor {
+  display:inline-block;
+  width:8px;
+  height:18px;
+  background:#0ff;
+  margin-left:6px;
+  animation:blink 1s steps(1) infinite;
+  vertical-align:bottom;
+}
+@keyframes blink {50%{opacity:0;}}
+
+/* STATUS INDICATORS */
+.status-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+  margin-top:18px;
+  z-index:6;
+}
+.status {
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:bold;
+  border:1px solid rgba(0,255,255,0.15);
+  box-shadow:0 0 12px rgba(0,255,255,0.06);
+  cursor:pointer;
+}
+.status.green { background:linear-gradient(90deg,#002b2b,#003f3f); color:#9affbf; box-shadow:0 0 20px #00ff99;}
+.status.yellow { background:linear-gradient(90deg,#2b2200,#3f2f00); color:#fff3a6; box-shadow:0 0 20px #ffd93d;}
+.status.red { background:linear-gradient(90deg,#2b0000,#3f0000); color:#ffb3b3; box-shadow:0 0 20px #ff4d4d;}
+
+/* RESPONSIVE STYLING */
+@media (max-width: 768px) {
+  .logo-text { font-size:28px; }
+  .tagline { font-size:14px; }
+  textarea { height:100px; font-size:14px; }
+  .holo-card { width:160px; height:120px; padding:8px; }
+  .holo-card h3 { font-size:14px; }
+  .holo-card p { font-size:12px; }
+  .terminal { font-size:12px; padding:10px; }
+  button { font-size:12px; padding:6px 10px; margin-bottom:5px; }
+  .status { font-size:12px; padding:6px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- MATRIX CANVAS -->
+<canvas id="matrixCanvas"></canvas>
+
+<!-- HOME LOGO -->
+<section class="home-section">
+  <div class="logo-container">
+    <img id="logoImg" src="logo.png" alt="Satasibe Logo">
+    <div class="logo-text">⚡ Satasibe ⚡</div>
+    <p class="tagline">Secret Language Creator & Translator System</p>
+  </div>
+</section>
+<center>
+<!-- TEXTAREA + BUTTONS -->
+<h2>Ultimate Secret Language Translator</h2>
+<textarea id="inputText" placeholder="Type your text here..."></textarea><br>
+<button id="copyBtn">Copy Output</button>
+<button id="reverseBtn">Reverse Translate</button>
+<div id="output"></div>
+</center>
+<!-- HOLOGRAM CARDS -->
+<div class="holo-container">
+  <div class="holo-card"><h3>Encrypt</h3><p>Turn plain text into the Satasibe cipher with multiple layers.</p></div>
+  <div class="holo-card"><h3>Decode</h3><p>Reverse the symbols back to readable text quickly.</p></div>
+  <div class="holo-card"><h3>Share</h3><p>Copy and paste securely; built-in clipboard and export.</p></div>
+</div>
+
+<!-- TERMINAL -->
+<div class="terminal"><center>$ <span id="terminalText"></span><span class="cursor"></span></center></div>
+
+<!-- STATUS -->
+<div class="status-row">
+  <div class="status green">SYSTEM OK</div>
+  <div class="status yellow">DEGRADED</div>
+  <div class="status red">ALERT</div>
+</div>
+
+<script>
+// MATRIX RAIN
+const matrix = document.getElementById("matrixCanvas");
+const ctx = matrix.getContext("2d");
+let w = window.innerWidth;
+let h = window.innerHeight;
+matrix.width = w;
+matrix.height = h;
+const fontSize = 16;
+const columns = Math.floor(w/fontSize);
+let ypos = Array(columns).fill(0);
+function drawMatrix() {
+  ctx.fillStyle="rgba(0,0,0,0.05)";
+  ctx.fillRect(0,0,w,h);
+  ctx.fillStyle="#00ff99";
+  ctx.font = fontSize+"px monospace";
+  for(let i=0;i<columns;i++){
+    const text = String.fromCharCode(0x30A0 + Math.random()*96);
+    ctx.fillText(text, i*fontSize, ypos[i]*fontSize);
+    ypos[i] = ypos[i]*fontSize > h && Math.random() > 0.975 ? 0 : ypos[i]+1;
+  }
+}
+setInterval(drawMatrix,50);
+window.addEventListener("resize",()=>{
+  w=window.innerWidth;
+  h=window.innerHeight;
+  matrix.width=w;
+  matrix.height=h;
+});
+
+// TERMINAL TYPING
+const terminalPhrases=["Initializing Satasibe...","Loading symbol maps...","Encryptor ready."];
+let tIndex=0,cIndex=0;
+function typeLoop(){
+  const el=document.getElementById("terminalText");
+  const phrase=terminalPhrases[tIndex];
+  if(cIndex<=phrase.length){el.textContent=phrase.slice(0,cIndex); cIndex++;}
+  else{setTimeout(()=>{cIndex=0;tIndex=(tIndex+1)%terminalPhrases.length;},1200);}
+}
+setInterval(typeLoop,80);
+
+// SECRET TRANSLATOR
+const secretMap = {"a":"▫▪","b":"▪▫","c":"◼◻","d":"◆◇","e":"▣□","f":"△▲","g":"▶▷","h":"◀◁","i":"◎●","j":"¤¥","k":"♠♣","l":"★☆","m":"✦✧","n":"⟐⟡","o":"◉◯","p":"∞∴","q":"⊗⊙","r":"⌘⌖","s":"✪✩","t":"✢✣","u":"♢♤","v":"☼☀","w":"⊳⊲","x":"✗✘","y":"☯☰","z":"☷☵"," ":"/","1":"-","2":".","3":"_","4":"!","5":"@","6":"#","7":"$","8":"%","9":"*","0":"|",};
+const reverseMap={};
+for(let k in secretMap) reverseMap[secretMap[k]]=k;
+const input = document.getElementById("inputText");
+const output = document.getElementById("output");
+const reverseBtn = document.getElementById("reverseBtn");
+const copyBtn = document.getElementById("copyBtn");
+input.addEventListener("input", ()=>{output.textContent = [...input.value.toLowerCase()].map(c=>secretMap[c]?secretMap[c]:"").join(" ");});
+reverseBtn.addEventListener("click",()=>{output.textContent = input.value.split(" ").map(p=>reverseMap[p]?reverseMap[p]:p).join("");});
+copyBtn.addEventListener("click",()=>{navigator.clipboard.writeText(output.textContent); copyBtn.textContent="COPIED!"; setTimeout(()=>copyBtn.textContent="Copy Output",1500);});
+</script>
+
+<div class="footer"><center>© Made by D.M.Sithum Sayuranga Bandara</center></div>
+
+<!-- Top-right arrows & menu -->
+<div class="top-right-arrows" onclick="toggleMenu()">↑↑↑</div>
+<div id="menu" class="hidden-menu">
+  <a href="members.html">Home</a>
+  <a href="translator.html">Translator</a>
+  <a href="scan.html">Scan</a>
+  <a href="contact.html">Contact</a>
+     <a href="noticeboard.html">Notice Board</a>
+
+
+</div>
+
+<style>
+.top-right-arrows{
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-size: 28px;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff;
+  cursor: pointer;
+  z-index: 10;
+}
+.hidden-menu{
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background: #0a0f2d;
+  border: 1px solid #00eaff;
+  box-shadow:0 0 20px #00eaff;
+  padding: 15px;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+}
+.hidden-menu a{
+  color: #00eaff;
+  text-decoration: none;
+  font-size: 18px;
+}
+.hidden-menu a:hover{
+  text-decoration: underline;
+}
+</style>
+
+<script>
+function toggleMenu(){
+  const menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+</script>
+
+
+
+</body>
+</html>

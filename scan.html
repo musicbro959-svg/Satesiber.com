@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>⚡Satasibe Scanner⚡</title>
+<style>
+  body {
+    margin: 0;
+    background: #000;
+    color: #0ff;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+  }
+
+  canvas#matrix {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .scanner-box {
+    width: 90%;
+    max-width: 500px;
+    margin: 80px auto;
+    padding: 20px;
+    border: 2px solid #00eaff;
+    border-radius: 12px;
+    box-shadow: 0 0 25px #00eaff inset, 0 0 20px #00eaff;
+    background: rgba(0, 20, 40, 0.35);
+    backdrop-filter: blur(6px);
+    animation: floatBox 6s infinite ease-in-out;
+  }
+
+  @keyframes floatBox {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0); }
+  }
+
+  .logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+    animation: holoFloatLogo 6s ease-in-out infinite;
+  }
+
+  .logo-container img {
+    width: 120px;
+    max-width: 40%;
+    filter: drop-shadow(0 0 12px #0ff) drop-shadow(0 0 20px #00eaff);
+    animation: holoPulse 2.5s infinite alternate, holoRotate 8s linear infinite;
+  }
+
+  .logo-container .logo-title {
+    font-size: 32px;
+    color: #0ff;
+    text-shadow: 0 0 20px #00eaff;
+    margin-top: 10px;
+    animation: titleGlow 2s infinite alternate;
+    word-wrap: break-word;
+  }
+
+  @keyframes holoPulse { 0%{filter: drop-shadow(0 0 8px #0ff);} 100%{filter: drop-shadow(0 0 22px #00eaff);} }
+  @keyframes holoFloatLogo { 0%{transform:translateY(0);} 50%{transform:translateY(-10px);} 100%{transform:translateY(0);} }
+  @keyframes holoRotate { 0%{transform: rotateY(0deg);} 100%{transform: rotateY(360deg);} }
+  @keyframes titleGlow { 0% {text-shadow: 0 0 15px #0ff, 0 0 25px #00eaff;} 100% {text-shadow: 0 0 30px #0ff, 0 0 45px #00eaff;} }
+
+  .btn {
+    padding: 12px 20px;
+    background: transparent;
+    border: 2px solid #00eaff;
+    border-radius: 8px;
+    color: #0ff;
+    cursor: pointer;
+    margin: 5px;
+    transition: 0.25s;
+    font-size: 16px;
+    width: 100%;
+    max-width: 180px;
+  }
+
+  .btn:hover {
+    background: #00eaff;
+    color: #000;
+    box-shadow: 0 0 20px #00eaff;
+  }
+
+  #preview {
+    width: 100%;
+    margin-top: 20px;
+    border: 1px solid #00eaff;
+    border-radius: 10px;
+    object-fit: contain;
+  }
+
+  #output {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 255, 255, 0.05);
+    border: 1px solid #00eaff;
+    min-height: 80px;
+    font-size: 16px;
+    word-wrap: break-word;
+  }
+
+  video {
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+
+  /* Menu styling */
+  .top-right-arrows{
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    color: #0ff;
+    text-shadow: 0 0 10px #0ff;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .hidden-menu{
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    background: #0a0f2d;
+    border: 1px solid #00eaff;
+    box-shadow:0 0 20px #00eaff;
+    padding: 15px;
+    border-radius: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+  }
+
+  .hidden-menu a{
+    color: #00eaff;
+    text-decoration: none;
+    font-size: 18px;
+  }
+
+  .hidden-menu a:hover{ text-decoration: underline; }
+
+  /* Footer */
+  .footer{
+    text-align: center;
+    margin: 40px 0 20px 0;
+    font-size: 14px;
+    color: #0ff;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px){
+    .logo-container .logo-title { font-size: 24px; }
+    .btn { font-size: 14px; max-width: 100%; padding: 10px; }
+    .scanner-box { margin: 50px 10px; padding: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="logo-container">
+  <img src="logo.png" alt="Satasibe Logo" />
+  <div class="logo-title">⚡Satasibe Scanner⚡</div>
+</div>
+
+<canvas id="matrix"></canvas>
+
+<div class="scanner-box">
+  <center>
+    <input type="file" id="fileInput" accept="image/*" class="btn" />
+    <button class="btn" onclick="startCamera()">📷 Live Camera</button>
+    <button class="btn" onclick="captureFrame()">Scan Now</button>
+    <button class="btn" onclick="clearPreview()">❌ Clear Photo</button>
+    <button class="btn" onclick="stopCamera()">⏹ Stop Camera</button>
+  </center>
+  <video id="camera" autoplay playsinline style="display:none;"></video>
+  <img id="preview" />
+  <div id="output">Translated text will appear here...</div>
+</div>
+
+<!-- Menu -->
+<div class="top-right-arrows" onclick="toggleMenu()">↑↑↑</div>
+<div id="menu" class="hidden-menu">
+  <a href="members.html">Home</a>
+  <a href="translator.html">Translator</a>
+  <a href="scan.html">Scan</a>
+  <a href="contact.html">Contact</a>
+  <a href="noticeboard.html">Notice Board</a>
+  <a href="chat.html">Chat</a>
+</div>
+
+<div class="footer">© Made by D.M.Sithum Sayuranga Bandara</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script>
+  // Matrix background
+  const c=document.getElementById("matrix"), ctx=c.getContext("2d");
+  let w,h;
+  function resize(){ c.width=window.innerWidth; c.height=window.innerHeight; w=c.width; h=c.height; }
+  resize(); window.addEventListener("resize",resize);
+  const cols=Math.floor(w/20); let ypos=Array(cols).fill(0);
+  function matrix(){
+    ctx.fillStyle="rgba(0,0,0,0.05)";
+    ctx.fillRect(0,0,w,h);
+    ctx.fillStyle="#00ffaa"; ctx.font="15pt monospace";
+    ypos.forEach((y,ind)=>{
+      const text=String.fromCharCode(0x30A0+Math.random()*96);
+      ctx.fillText(text, ind*20, y);
+      ypos[ind]=y>h+Math.random()*10000?0:y+20;
+    });
+  }
+  setInterval(matrix,50);
+
+  // OCR
+  const fileInput=document.getElementById("fileInput"), preview=document.getElementById("preview");
+  fileInput.addEventListener("change",()=>{
+    const file=fileInput.files[0];
+    if(!file) return;
+    preview.src=URL.createObjectURL(file);
+    runOCR(preview);
+  });
+
+  const camera=document.getElementById("camera");
+  let stream;
+  async function startCamera(){
+    stream=await navigator.mediaDevices.getUserMedia({video:true});
+    camera.srcObject=stream; camera.style.display="block";
+  }
+
+  function captureFrame(){
+    const canvas=document.createElement("canvas");
+    canvas.width=camera.videoWidth; canvas.height=camera.videoHeight;
+    const ctx2=canvas.getContext("2d");
+    ctx2.drawImage(camera,0,0);
+    preview.src=canvas.toDataURL();
+    runOCR(canvas);
+  }
+
+  function clearPreview(){
+    preview.src=""; document.getElementById("output").innerHTML="Translated text will appear here...";
+  }
+
+  function stopCamera(){
+    if(stream){ stream.getTracks().forEach(track=>track.stop()); camera.style.display="none"; }
+  }
+
+  function translateText(text){ return text.replace(/\./g,'e').replace(/-/g,'t'); }
+
+  async function runOCR(image){
+    document.getElementById("output").innerHTML="Scanning...";
+    const result=await Tesseract.recognize(image,'eng',{logger:m=>console.log(m)});
+    const raw=result.data.text;
+    const translated=translateText(raw);
+    document.getElementById("output").innerHTML=translated;
+  }
+
+  function toggleMenu(){
+    const menu=document.getElementById("menu");
+    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Satasibe Members ⚡</title>
+
+<style>
+/* --- Page Base --- */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #05010a;
+  color: #f0f0f0;
+  overflow-x: hidden;
+}
+
+/* Matrix */
+#matrixCanvas {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* --- Top Logo Section --- */
+.home-section {
+  margin-top:100px;
+  text-align:center;
+  padding:20px;
+  position:relative;
+  z-index:6;
+}
+.logo-container {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+#logoImg {
+  width:120px;
+  height:120px;
+  border-radius:18px;
+  border:1px solid rgba(0,255,255,0.18);
+  box-shadow:0 0 25px #00eaff88;
+}
+.logo-text {
+  font-size:42px;
+  color:#aef;
+  text-shadow:0 0 16px #0ff;
+}
+.tagline {
+  color:#6df;
+  text-shadow:0 0 8px #6df;
+}
+
+/* --- Members Box --- */
+.members-section {
+  width:90%;
+  max-width:1050px;
+  margin:40px auto;
+  background: rgba(0,20,40,0.45);
+  border: 1px solid #00eaff;
+  border-radius:12px;
+  padding:20px;
+  backdrop-filter: blur(6px);
+  position:relative;
+  z-index:3;
+}
+.members-section h2 {
+  text-align:center;
+  color:#0ff;
+  margin-bottom:20px;
+  font-size:30px;
+  text-shadow:0 0 12px #00eaff;
+}
+
+form {
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+input, button {
+  padding:10px;
+  font-size:15px;
+  border-radius:8px;
+  border:1px solid #00eaff;
+  background: rgba(0,0,0,0.25);
+  color:#0ff;
+  outline:none;
+}
+button:hover {
+  background:#00eaff;
+  color:#000;
+  box-shadow:0 0 15px #00eaff;
+  cursor:pointer;
+}
+
+/* --- Member Cards --- */
+.member-list {
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap:18px;
+  padding:10px;
+}
+
+.member-card {
+  padding:15px;
+  border:1px solid #00eaff;
+  border-radius:12px;
+  background: rgba(0,0,0,0.35);
+  text-align:center;
+  box-shadow:0 0 12px #00aaff55;
+  transition:0.3s;
+}
+.member-card:hover {
+  transform:scale(1.03);
+  box-shadow:0 0 20px #00eaff;
+}
+.member-card img {
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  border:1px solid #0ff;
+  margin-bottom:8px;
+  cursor:pointer;
+}
+
+/* Member info */
+.member-info .name {
+  font-size:18px;
+  font-weight:bold;
+  color:#0ff;
+}
+.member-info .number {
+  font-size:14px;
+  opacity:0.8;
+  margin-bottom:8px;
+}
+
+/* Call Button */
+.call-btn {
+  display:block;
+  padding:8px;
+  border-radius:8px;
+  border:1px solid #00eaff;
+  color:#0ff;
+  margin:6px 0;
+  text-decoration:none;
+  transition:.3s;
+}
+.call-btn:hover {
+  background:#00eaff;
+  color:#000;
+  box-shadow:0 0 20px #00eaff;
+}
+
+/* Delete Button */
+.delete-btn {
+  padding:7px 12px;
+  border-radius:8px;
+  border:1px solid #ff0055;
+  color:#ff6699;
+  background:transparent;
+  transition:0.3s;
+}
+.delete-btn:hover {
+  background:#ff0055;
+  color:#000;
+  box-shadow:0 0 15px #ff0055;
+}
+
+/* Footer */
+.footer {
+  text-align:center;
+  padding:10px;
+  color:#0ff;
+  opacity:.7;
+  margin-top:25px;
+}
+
+/* Menu button */
+.top-right-arrows {
+  position:fixed;
+  top:10px; right:10px;
+  font-size:28px;
+  color:#0ff;
+  cursor:pointer;
+  z-index:20;
+  text-shadow:0 0 10px #0ff;
+}
+.hidden-menu {
+  position:fixed;
+  top:50px; right:10px;
+  background:#0a0f2d;
+  border:1px solid #00eaff;
+  padding:15px;
+  border-radius:10px;
+  display:none;
+  flex-direction:column;
+  gap:10px;
+  z-index:25;
+}
+.hidden-menu a {
+  color:#00eaff;
+  text-decoration:none;
+  font-size:18px;
+}
+.hidden-menu a:hover {
+  text-decoration:underline;
+}
+</style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="top-right-arrows" onclick="toggleMenu()">☰</div>
+<div id="menu" class="hidden-menu">
+  <a href="members.html">Home</a>
+  <a href="translator.html">Translator</a>
+  <a href="scan.html">Scan</a>
+  <a href="contact.html">Contact</a>
+  <a href="noticeboard.html">Notice Board</a>
+  <a href="chat.html">Chat</a>
+</div>
+
+<section class="home-section">
+  <div class="logo-container">
+    <img id="logoImg" src="logo.png" alt="Logo">
+    <div class="logo-text">⚡ Satasibe Members ⚡</div>
+    <p class="tagline">Secret Language Creator & Translator System</p>
+  </div>
+</section>
+
+<section class="members-section">
+  <h2>Members</h2>
+
+  <form id="memberForm">
+    <input type="file" id="memberPhoto" accept="image/*">
+    <input type="text" id="memberName" placeholder="Enter Name" required>
+    <input type="text" id="memberNumber" placeholder="Enter Number" required>
+    <button type="submit">Add Member</button>
+    <button type="button" onclick="clearForm()">Clear</button>
+  </form>
+
+  <div id="memberList" class="member-list"></div>
+</section>
+
+<div class="footer">© Made by D.M.Sithum Sayuranga Bandara</div>
+
+<script>
+/* ------------------ MATRIX ------------------ */
+const matrix=document.getElementById("matrixCanvas");
+const ctx=matrix.getContext("2d");
+let w=window.innerWidth, h=window.innerHeight;
+matrix.width=w; matrix.height=h;
+const fontSize=18, columns=Math.floor(w/fontSize);
+let ypos=Array(columns).fill(0);
+
+function draw(){
+  ctx.fillStyle="rgba(0,0,0,0.05)";
+  ctx.fillRect(0,0,w,h);
+  ctx.fillStyle="#00ff99";
+  ctx.font=fontSize+"px monospace";
+  for(let i=0;i<columns;i++){
+    const text=String.fromCharCode(0x30A0+Math.random()*96);
+    ctx.fillText(text,i*fontSize,ypos[i]*fontSize);
+    ypos[i] = ypos[i]*fontSize > h && Math.random()>0.975 ? 0 : ypos[i]+1;
+  }
+}
+setInterval(draw,50);
+
+/* ------------------ MENU ------------------ */
+function toggleMenu(){
+  const m=document.getElementById("menu");
+  m.style.display = m.style.display==="flex" ? "none" : "flex";
+}
+
+/* ------------------ MEMBERS ------------------ */
+const memberForm=document.getElementById('memberForm');
+const memberList=document.getElementById('memberList');
+
+memberForm.addEventListener('submit', e=>{
+  e.preventDefault();
+  const name=document.getElementById('memberName').value;
+  const number=document.getElementById('memberNumber').value;
+  const photo=document.getElementById('memberPhoto');
+
+  let photoSrc="member_placeholder.png";
+
+  if(photo.files && photo.files[0]){
+    const reader=new FileReader();
+    reader.onload=e=> addMember(name, number, e.target.result);
+    reader.readAsDataURL(photo.files[0]);
+  } else {
+    addMember(name, number, photoSrc);
+  }
+  memberForm.reset();
+});
+
+function addMember(name, number, photo){
+  const div=document.createElement("div");
+  div.className="member-card";
+
+  div.innerHTML = `
+    <img src="${photo}">
+    <div class="member-info">
+      <div class="name">${name}</div>
+      <div class="number">${number}</div>
+    </div>
+
+    <a href="tel:${number}" class="call-btn">📞 Call Now</a>
+    <button class="delete-btn" onclick="deleteMember(this)">Delete</button>
+  `;
+
+  memberList.appendChild(div);
+}
+
+function deleteMember(btn){
+  btn.parentElement.remove();
+}
+
+function clearForm(){
+  memberForm.reset();
+}
+</script>
+
+
+</body>
+</html>

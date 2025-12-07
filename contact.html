@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡Satasibe Contacts⚡</title>
+<style>
+body { margin:0; background:#05010a; color:#0ff; font-family: Arial, sans-serif; overflow-x:hidden; }
+.canvas-bg{position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1;}
+.container{width:90%; max-width:1200px; margin:60px auto; padding:20px; border-radius:12px; background: rgba(0,20,40,0.35); backdrop-filter: blur(6px);}
+header{display:flex; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:30px;}
+header img.logo{width:80px; border-radius:12px; box-shadow:0 0 15px #0ff;}
+header .title-text{display:flex; flex-direction:column; flex:1;}
+header h1{font-size:36px; text-shadow:0 0 15px #0ff; margin:0; display:flex; align-items:center; gap:10px;}
+header h2{font-size:20px; margin:5px 0 0 0; opacity:0.8;}
+form{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:30px;}
+input,button{padding:10px; border-radius:8px; border:1px solid #00eaff; background:rgba(0,0,0,0.2); color:#0ff; font-size:16px; flex:1 1 150px;}
+button{cursor:pointer; transition:0.25s;}
+button:hover{background:#00eaff; color:#000; box-shadow:0 0 20px #00eaff;}
+.cards-container{display:flex; flex-wrap:wrap; gap:20px; justify-content:center;}
+.member-card{width:180px; background: rgba(0,10,20,0.6); border:2px solid #00eaff; border-radius:12px; padding:15px; text-align:center; box-shadow:0 0 15px #0ff; transition:0.3s;}
+.member-card:hover{box-shadow:0 0 25px #00eaff,0 0 35px #0ff inset; transform: translateY(-5px);}
+.member-card img{width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:10px;}
+.member-card h3{margin:5px 0;}
+.member-card p{margin:0; opacity:0.8; word-wrap: break-word;}
+.footer{ text-align: center; margin-top:40px; font-size: 14px; color: #0ff; opacity:0.7; position: fixed; bottom:10px; width:100%; }
+@media (max-width: 768px) {
+  header h1{font-size:28px;}
+  header h2{font-size:16px;}
+  .member-card{width:140px; padding:10px;}
+  .member-card img{width:80px; height:80px;}
+  input,button{font-size:14px; padding:8px;}
+}
+</style>
+</head>
+<body>
+<canvas class="canvas-bg" id="matrixCanvas"></canvas>
+<div class="container">
+  <header>
+    <img src="logo.png" class="logo" alt="Logo">
+    <div class="title-text">
+      <h1>⚡Satasibe Contacts ⚡</h1>
+      <h2>Member Profiles</h2>
+    </div>
+  </header>
+  <form id="memberForm">
+    <input type="text" id="name" placeholder="Enter Name" required />
+    <input type="text" id="number" placeholder="Enter Number" required />
+    <input type="file" id="photo" accept="image/*" required />
+    <button type="submit">Add Member</button>
+    <button type="button" onclick="clearForm()">Clear Form</button>
+  </form>
+  <div class="cards-container" id="cardsContainer"></div>
+</div>
+<div class="footer">© Made by D.M.Sithum Sayuranga Bandara</div>
+<script>
+const form = document.getElementById('memberForm');
+const container = document.getElementById('cardsContainer');
+form.addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const name = document.getElementById('name').value;
+  const number = document.getElementById('number').value;
+  const photoFile = document.getElementById('photo').files[0];
+  if(!photoFile) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    addCard(name, number, ev.target.result);
+    form.reset();
+  };
+  reader.readAsDataURL(photoFile);
+});
+function addCard(name, number, photo){
+  const card = document.createElement('div');
+  card.className='member-card';
+  card.innerHTML = `<img src='${photo}' alt='Profile'><h3>${name}</h3><p>${number}</p><button onclick='deleteCard(this)'>Delete</button>`;
+  container.appendChild(card);
+}
+function deleteCard(btn){ btn.parentElement.remove(); }
+function clearForm(){ form.reset(); }
+/* Matrix Rain Background */
+const canvas = document.getElementById('matrixCanvas');
+const ctx = canvas.getContext('2d');
+let w=canvas.width=window.innerWidth, h=canvas.height=window.innerHeight;
+const cols=Math.floor(w/20);
+const ypos=Array(cols).fill(0);
+function matrix(){ ctx.fillStyle='rgba(0,0,0,0.05)'; ctx.fillRect(0,0,w,h); ctx.fillStyle='#00ffaa'; ctx.font='15pt monospace'; ypos.forEach((y,i)=>{ const text=String.fromCharCode(0x30A0+Math.random()*96); ctx.fillText(text,i*20,y); ypos[i]=y>h+Math.random()*10000?0:y+20; }); }
+setInterval(matrix,50);
+window.addEventListener('resize',()=>{ w=canvas.width=window.innerWidth; h=canvas.height=window.innerHeight; });
+</script>
+
+<!-- Top-right arrows & menu -->
+<div class="top-right-arrows" onclick="toggleMenu()">↑↑↑</div>
+<div id="menu" class="hidden-menu">
+  <a href="members.html">Home</a>
+  <a href="translator.html">Translator</a>
+  <a href="scan.html">Scan</a>
+  <a href="contact.html">Contact</a>
+  <a href="noticeboard.html">Notice Board</a>
+  <a href="chat.html">Chat</a>
+
+</div>
+
+<style>
+.top-right-arrows{
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-size: 28px;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff;
+  cursor: pointer;
+  z-index: 10;
+}
+.hidden-menu{
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background: #0a0f2d;
+  border: 1px solid #00eaff;
+  box-shadow:0 0 20px #00eaff;
+  padding: 15px;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+}
+.hidden-menu a{
+  color: #00eaff;
+  text-decoration: none;
+  font-size: 18px;
+}
+.hidden-menu a:hover{
+  text-decoration: underline;
+}
+</style>
+
+<script>
+function toggleMenu(){
+  const menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+</script>
+
+
+</body>
+</html>

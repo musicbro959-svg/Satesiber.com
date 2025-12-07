@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>⚡Satasibe Cyber Chat⚡ — Enhanced</title>
+<style>
+  body{margin:0; background:#02060a; font-family:Arial, sans-serif; color:#0ff; overflow:hidden;}
+  #matrixBG{position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none;}
+  .chat-wrap{position:relative; z-index:5; max-width:900px; margin:40px auto; background:rgba(0,0,0,0.4); border:1px solid rgba(0,255,255,0.12); border-radius:12px; padding:18px; backdrop-filter:blur(6px);}
+  .logo-box{text-align:center; margin-bottom:18px;}
+  .logo-box img{width:110px; height:110px; border-radius:14px; border:1px solid rgba(0,255,255,0.25); box-shadow:0 0 18px rgba(0,255,255,0.3);}
+  .title{text-align:center; font-size:28px; text-shadow:0 0 10px #0ff; margin-top:8px;}
+  .online-status{text-align:center; font-size:14px; margin-top:4px; opacity:0.7;}
+  .chat-box{height:420px; overflow-y:auto; background:rgba(0,0,0,0.25); padding:12px; border-radius:10px; border:1px solid rgba(0,255,255,0.15);}
+  .msg{max-width:75%; padding:10px; margin:10px 0; background:rgba(0,255,255,0.07); border-left:3px solid #0ff; border-radius:10px; color:#dff; display:flex; gap:10px; align-items:flex-start;}
+  .me{ margin-left:auto; background:rgba(0,150,255,0.2); border-left-color:#09f; }
+  .pfp{width:42px; height:42px; border-radius:50%; border:1px solid #0ff;}
+  .msg-content{flex:1;}
+  .msg-name{font-weight:bold; font-size:13px; margin-bottom:4px;}
+  .msg-text{font-size:14px; line-height:1.3;}
+  .delete-btn{cursor:pointer; color:#f55; font-size:12px; opacity:0.7;}
+  .delete-btn:hover{opacity:1;}
+  .input-area{display:flex; gap:8px; margin-top:12px;}
+  input{flex:1; padding:12px; background:rgba(0,0,0,0.4); border:1px solid rgba(0,255,255,0.2); border-radius:8px; color:#0ff;}
+  button{padding:12px 18px; border:none; border-radius:8px; background:#0ff; color:#000; cursor:pointer; font-weight:bold;}
+  button:hover{background:#8ff;}
+  .footer{margin-top:14px; text-align:center; color:rgba(0,255,255,0.6); font-size:13px;}
+</style>
+</head>
+<body>
+<canvas id="matrixBG"></canvas>
+<div class="chat-wrap">
+  <div class="logo-box">
+    <img src="logo.png" alt="Logo" />
+    <div class="title">⚡Satasibe Cyber Chat⚡</div>
+    <div class="online-status">🟢 Online</div>
+    <div style="margin-top:10px;">
+      <input type="file" id="pfpUpload" accept="image/*" />
+    </div>
+  </div>
+  <div class="chat-box" id="chatBox"></div>
+  <div class="input-area">
+    <input type="text" id="msgInput" placeholder="Type your message...">
+    <button onclick="sendMsg()">Send</button>
+  </div>
+  <div class="footer">© Made by D.M.Sithum Sayuranga Bandara</div>
+</div>
+<script>
+const canvas=document.getElementById('matrixBG');
+const ctx=canvas.getContext('2d');
+let W=canvas.width=window.innerWidth,H=canvas.height=window.innerHeight;
+window.addEventListener('resize',()=>{W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;init();});
+let fontSize=14,cols,drops;
+function init(){cols=Math.floor(W/fontSize);drops=new Array(cols).fill(1);} init();
+function draw(){ ctx.fillStyle='rgba(0,0,0,0.06)'; ctx.fillRect(0,0,W,H); ctx.fillStyle='rgba(0,255,255,0.9)'; ctx.font=fontSize+'px monospace'; for(let i=0;i<cols;i++){const text=String.fromCharCode(0x30A0+Math.random()*96);ctx.fillText(text,i*fontSize,drops[i]*fontSize);drops[i]=drops[i]*fontSize>H&&Math.random()>0.975?0:drops[i]+1;}}
+setInterval(draw,45);
+
+let username="You";
+let pfp="pfp.png";
+document.getElementById('pfpUpload').addEventListener('change',function(e){const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=function(ev){pfp=ev.target.result;};reader.readAsDataURL(f);});
+
+function sendMsg(){
+  const box=document.getElementById('chatBox');
+  const input=document.getElementById('msgInput');
+  const txt=input.value.trim();
+  if(!txt) return;
+  const msg=document.createElement('div');
+  msg.className='msg me';
+  msg.innerHTML=`<img src="${pfp}" class="pfp"><div class="msg-content"><div class="msg-name">${username}</div><div class="msg-text">${escapeHtml(txt)}</div></div><div class="delete-btn" onclick="deleteMsg(this)">Delete</div>`;
+  box.appendChild(msg);
+  box.scrollTop=box.scrollHeight;
+  playSound();
+  input.value='';
+}
+function deleteMsg(btn){btn.parentElement.remove();}
+function escapeHtml(unsafe){return unsafe.replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[m]));}
+function playSound(){const audio=new Audio('send.mp3');audio.volume=0.4;audio.play();}
+</script>
+
+<!-- Top-right arrows & menu -->
+<div class="top-right-arrows" onclick="toggleMenu()">↑↑↑</div>
+<div id="menu" class="hidden-menu">
+  <a href="members.html">Home</a>
+  <a href="translator.html">Translator</a>
+  <a href="scan.html">Scan</a>
+  <a href="contact.html">Contact</a>
+  <a href="noticeboard.html">Notice Board</a>
+  <a href="chat.html">Chat</a>
+
+</div>
+
+<style>
+.top-right-arrows{
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-size: 28px;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff;
+  cursor: pointer;
+  z-index: 10;
+}
+.hidden-menu{
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background: #0a0f2d;
+  border: 1px solid #00eaff;
+  box-shadow:0 0 20px #00eaff;
+  padding: 15px;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+}
+.hidden-menu a{
+  color: #00eaff;
+  text-decoration: none;
+  font-size: 18px;
+}
+.hidden-menu a:hover{
+  text-decoration: underline;
+}
+</style>
+
+<script>
+function toggleMenu(){
+  const menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+</script>
+
+
+</body>
+</html>
